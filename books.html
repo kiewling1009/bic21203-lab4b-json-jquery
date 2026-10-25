@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Information</title>
+</head>
+<body>
+    <h1>Book Information</h1>
+
+    <div id="bookInfo" role="status" aria-live="polite">
+        Loading book information...
+    </div>
+
+    <script>
+        const bookInfo = document.getElementById("bookInfo");
+
+        async function loadBooks() {
+            try {
+                const response = await fetch("books.json");
+
+                if (!response.ok) {
+                    throw new Error("Unable to load the JSON file.");
+                }
+
+                const data = await response.json();
+
+                if (!data.books || data.books.length < 2) {
+                    throw new Error("The JSON data is incomplete.");
+                }
+
+                bookInfo.textContent = "";
+
+                // Display the title of the first book
+                const firstTitle = document.createElement("p");
+                firstTitle.textContent =
+                    "First book title: " + data.books[0].title;
+                bookInfo.appendChild(firstTitle);
+
+                // Display the author of the second book
+                const secondAuthor = document.createElement("p");
+                secondAuthor.textContent =
+                    "Second book author: " + data.books[1].author;
+                bookInfo.appendChild(secondAuthor);
+
+                // Display the genres of both books
+                const genreHeading = document.createElement("h2");
+                genreHeading.textContent = "Genres of Both Books";
+                bookInfo.appendChild(genreHeading);
+
+                data.books.forEach(function(book) {
+                    const bookHeading = document.createElement("h3");
+                    bookHeading.textContent = book.title;
+                    bookInfo.appendChild(bookHeading);
+
+                    const genreText = document.createElement("p");
+                    genreText.textContent =
+                        "Genres: " + book.genres.join(", ");
+                    bookInfo.appendChild(genreText);
+                });
+
+            } catch (error) {
+                bookInfo.textContent =
+                    "Error: Unable to load book information. " +
+                    "Please check the JSON file and try again.";
+            }
+        }
+
+        loadBooks();
+    </script>
+</body>
+</html>
